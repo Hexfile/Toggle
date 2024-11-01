@@ -27,7 +27,10 @@ void Toggle::poll(uint8_t bit) {
     us_timestamp += us_period;
     if (_inputMode == inputMode::input || _inputMode == inputMode::input_pullup || _inputMode == inputMode::input_pulldown) {
       if (_inA) dat = digitalRead(_inA);
-      if (_inB) dat += digitalRead(_inB) * 2;
+      // Prevent read of _inB spamming debug log if it wasn't set during begin()
+      if (_inB != 255) {
+         if (_inB) dat += digitalRead(_inB) * 2;
+      }
     }
     if (_inputMode == inputMode::input_byte) dat = *_in;
     if (getInputInvert()) dat = ~dat;
